@@ -40,6 +40,20 @@ class DocId_Date_Mapping():
             print(f"Document ID : {docID} and the corresponding Date : {date} added to the Document Index")
         else:
             print("Already Exists...!!")
+    
+    def loadDocIDDateFile(self):
+        try:
+            with open(self.documentIndexPath, "r") as file:
+                return json.load(file)
+        except FileNotFoundError:
+            return {}
+        
+    def saveDocIDDateFile(self):
+        with open(self.documentIndexPath, "w") as file:
+            json.dump(self.mappings, file, indent=2)
+            
+            
+class Lexicon()
 
 
 with open(r"dsa_data\abcnews.json", "r") as file:
