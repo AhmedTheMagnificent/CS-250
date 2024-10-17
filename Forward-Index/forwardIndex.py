@@ -69,7 +69,7 @@ def preprocess(content):
 with open(r"A:\ProgrammingStuff\dsa_data\activistpost.json", "r") as file:
     data = json.load(file)
     
-print(len(data))
+
 
 def lexiconBuilder(words):
     try:
@@ -87,24 +87,27 @@ def lexiconBuilder(words):
     
     with open(r"A:\ProgrammingStuff\CS-250-Data-Structures-and-Algorithms\Forward-Index\Lexicon.json", "w") as file:
         json.dump(IDs, file, indent=2)
+        
+        
 
-# def buildForwardIndex(documents):
-#     for document in documents:
-#         for article in document:
-#             title = preprocess(article["title"])
-#             content = preprocess(article["content"])
-#             lexiconBuilder(title + content)
-#             try:
-#                 with open(r"A:\ProgrammingStuff\CS-250-Data-Structures-and-Algorithms\Forward-Index\Lexicon.json", "r") as file:
-#                     lexicon = json.load(file)
-#             except FileNotFoundError:
-#                 return {}
+
+def buildForwardIndex(documents):
+    for document in documents:
+        for article in document:
+            title = preprocess(article["title"])
+            content = preprocess(article["content"])
+            lexiconBuilder(title + content)
+            try:
+                with open(r"A:\ProgrammingStuff\CS-250-Data-Structures-and-Algorithms\Forward-Index\Lexicon.json", "r") as file:
+                    lexicon = json.load(file)
+            except FileNotFoundError:
+                return {}
             
-#             title_ids = [lexicon[word] for word in title]
-#             content_ids = [lexicon[word] for word in content]
+            title_ids = [lexicon[word] for word in title]
+            content_ids = [lexicon[word] for word in content]
             
-#             print(title_ids)
             
-# buildForwardIndex([data])
+            
+buildForwardIndex([data])
             
             
