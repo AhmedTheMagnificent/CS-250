@@ -76,7 +76,7 @@ def lexiconBuilder(words):
         with open(r"A:\ProgrammingStuff\CS-250-Data-Structures-and-Algorithms\Forward-Index\Lexicon.json", "r") as file:
             IDs = json.load(file)
             IDnumber = max(IDs.values()) + 1 if IDs else 1
-    except:
+    except FileNotFoundError:
         IDs = {}
         IDnumber = 1
     
@@ -93,7 +93,9 @@ def lexiconBuilder(words):
 
 def buildForwardIndex(documents):
     for document in documents:
-        for article in document:
+        path = r"A:\ProgrammingStuff\dsa_data"
+        articles = os.path.join(path, document)
+        for article in articles:
             title = preprocess(article["title"])
             content = preprocess(article["content"])
             lexiconBuilder(title + content)
@@ -106,8 +108,13 @@ def buildForwardIndex(documents):
             title_ids = [lexicon[word] for word in title]
             content_ids = [lexicon[word] for word in content]
             
-            
-            
-buildForwardIndex([data])
+
+files = os.listdir(r"dsa_data")     
+# buildForwardIndex([data])
+i = 0
+for j in files:
+    if j.endswith('.json'):
+        i += 1
+print(i)
             
             
