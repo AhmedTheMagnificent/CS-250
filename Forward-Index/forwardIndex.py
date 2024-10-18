@@ -92,8 +92,10 @@ def lexiconBuilder(words):
 
 
 def buildForwardIndex(documents):
+    forwardIndex = dict()
+    path = r"A:\ProgrammingStuff\dsa_data"
+    urlMapper = DocID_URL_Mapping()
     for document in documents:
-        path = r"A:\ProgrammingStuff\dsa_data"
         articles = os.path.join(path, document)
         for article in articles:
             title = preprocess(article["title"])
@@ -104,9 +106,11 @@ def buildForwardIndex(documents):
                     lexicon = json.load(file)
             except FileNotFoundError:
                 return {}
-            
+            urlMapper.addToDocumentIndex()
             title_ids = [lexicon[word] for word in title]
             content_ids = [lexicon[word] for word in content]
+            frequency = FreqDist(title_ids * 10 + content_ids)
+            forwardIndex
             
 
 files = os.listdir(r"dsa_data")     
