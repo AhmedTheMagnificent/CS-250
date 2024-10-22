@@ -89,7 +89,8 @@ def lexiconBuilder(words):
         json.dump(IDs, file, indent=2)
         
         
-
+lexiconBuilder(data)
+print(data)
 
 def buildForwardIndex(documents):
     forwardIndex = dict()
