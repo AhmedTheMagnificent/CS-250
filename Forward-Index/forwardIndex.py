@@ -90,7 +90,7 @@ def lexiconBuilder(words):
         
         
 lexiconBuilder(data)
-print(data)
+
 
 def buildForwardIndex(documents):
     forwardIndex = dict()
