@@ -28,30 +28,7 @@ class DocID_URL_Mapping():
         
     def saveDocumentIndex(self):
         with open(self.path, "w") as file:
-            json.dump(self.mappings, file, indent=2)
-        
-class DocID_Date_Mapping():
-    def __init__(self):
-        self.path = r"A:\ProgrammingStuff\CS-250-Data-Structures-and-Algorithms\Forward-Index\Dates.json"
-        self.mappings = self.loadDocumentIndex()
-        
-    def addToDocumentIndex(self, docID, date):
-        if str(date) not in self.mappings:
-            self.mappings[docID] = date
-            print(f"Document ID : {docID} and the corresponding Date : {date} added to the Document Index")
-        else:
-            print("Already Exists...!!")
-            
-    def loadDocumentIndex(self):
-        try:
-            with open(self.path, "r") as file:
-                return json.load(file)
-        except FileNotFoundError:
-            return {}
-        
-    def saveDocumentIndex(self):
-        with open(self.path, "w") as file:
-            json.dump(self.mappings, file, indent=2)
+            json.dump(self.mappings, file)
         
 
 lemmatizer = WordNetLemmatizer()
@@ -86,33 +63,43 @@ def lexiconBuilder(words):
             IDnumber += 1
     
     with open(r"A:\ProgrammingStuff\CS-250-Data-Structures-and-Algorithms\Forward-Index\Lexicon.json", "w") as file:
-        json.dump(IDs, file, indent=2)
+        json.dump(IDs, file)
         
-        
+
+ 
 lexiconBuilder(data)
 
-
+documentID = 0
 def buildForwardIndex(documents):
     forwardIndex = dict()
     path = r"A:\ProgrammingStuff\dsa_data"
     urlMapper = DocID_URL_Mapping()
     for document in documents:
         articles = os.path.join(path, document)
-        for article in articles:
-            title = preprocess(article["title"])
-            content = preprocess(article["content"])
-            lexiconBuilder(title + content)
-            try:
-                with open(r"A:\ProgrammingStuff\CS-250-Data-Structures-and-Algorithms\Forward-Index\Lexicon.json", "r") as file:
-                    lexicon = json.load(file)
-            except FileNotFoundError:
-                return {}
-            urlMapper.addToDocumentIndex()
-            title_ids = [lexicon[word] for word in title]
-            content_ids = [lexicon[word] for word in content]
-            frequency = FreqDist(title_ids * 10 + content_ids)
-            forwardIndex
-            
+        with open(articles, "r") as f:
+            A = json.load(f)
+            for article in A:
+                title = preprocess(article["title"])
+                content = preprocess(article["content"])
+                URL = article["URL"]
+                lexiconBuilder(title + content)
+                try:
+                    with open(r"A:\ProgrammingStuff\CS-250-Data-Structures-and-Algorithms\Forward-Index\Lexicon.json", "r") as file:
+                        lexicon = json.load(file)
+                except FileNotFoundError:
+                    return {}
+                urlMapper.addToDocumentIndex()
+                title_ids = [lexicon[word] for word in title]
+                content_ids = [lexicon[word] for word in content]
+                frequency = FreqDist(title_ids * 10 + content_ids)
+                dictionary = {}
+                for word in set(title + content):
+                    dictionary[lexicon[word]] = frequency[lexicon[word]]
+                forwardIndex[documentID] = dictionary
+                urlMapper.addToDocumentIndex(documentID, URL)
+                documentID += 1
+    return forwardIndex
+
 
 files = os.listdir(r"dsa_data")     
 # buildForwardIndex([data])
@@ -121,5 +108,3 @@ for j in files:
     if j.endswith('.json'):
         i += 1
 print(i)
-            
-            
