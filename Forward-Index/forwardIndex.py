@@ -9,7 +9,7 @@ import re
 
 class DocID_URL_Mapping():
     def __init__(self):
-        self.path = r"A:\ProgrammingStuff\CS-250-Data-Structures-and-Algorithms\Forward-Index\URLs.json"
+        self.path = r"CS-250-Data-Structures-and-Algorithms/Forward-Index/URLs.json"
         self.mappings = self.loadDocumentIndex()
         
     def addToDocumentIndex(self, docID, URL):
@@ -44,7 +44,7 @@ def preprocess(content):
             
 def lexiconBuilder(words):
     try:
-        with open(r"A:\ProgrammingStuff\CS-250-Data-Structures-and-Algorithms\Forward-Index\Lexicon.json", "r") as file:
+        with open(r"CS-250-Data-Structures-and-Algorithms/Forward-Index/Lexicon.json", "r") as file:
             IDs = json.load(file)
             IDnumber = max(IDs.values()) + 1 if IDs else 1
     except FileNotFoundError:
@@ -56,14 +56,14 @@ def lexiconBuilder(words):
             IDs[word] = IDnumber
             IDnumber += 1
     
-    with open(r"A:\ProgrammingStuff\CS-250-Data-Structures-and-Algorithms\Forward-Index\Lexicon.json", "w") as file:
+    with open(r"CS-250-Data-Structures-and-Algorithms/Forward-Index/Lexicon.json", "w") as file:
         json.dump(IDs, file)
 
 documentID = 0
 
 def buildForwardIndex(documents):
     global documentID
-    path = r"A:\ProgrammingStuff\dsa_data"
+    path = r"A:\ProgrmmingStuff\nela-gt-2022\newsdata"
     urlMapper = DocID_URL_Mapping()
     
     for document in documents:
@@ -78,7 +78,7 @@ def buildForwardIndex(documents):
                 lexiconBuilder(title + content)
                 
                 try:
-                    with open(r"A:\ProgrammingStuff\CS-250-Data-Structures-and-Algorithms\Forward-Index\Lexicon.json", "r") as file:
+                    with open(r"CS-250-Data-Structures-and-Algorithms/Forward-Index/Lexicon.json", "r") as file:
                         lexicon = json.load(file)
                 except FileNotFoundError:
                     return {}
@@ -96,12 +96,12 @@ def buildForwardIndex(documents):
                 forwardIndex[documentID] = dictionary
                 
                 # Write forwardIndex to disk incrementally
-                with open(r"A:\ProgrammingStuff\CS-250-Data-Structures-and-Algorithms\Forward-Index\ForwardIndex.json", "a") as file:
+                with open(r"CS-250-Data-Structures-and-Algorithms/Forward-Index/ForwardIndex.json", "a") as file:
                     json.dump({documentID: forwardIndex[documentID]}, file)
                     file.write("\n")  # Write each entry on a new line to avoid overwriting
 
                 documentID += 1
-
+print(os.listdir())
 # Ensure full path for dsa_data
-files = os.listdir(r"A:\ProgrammingStuff\dsa_data") 
-buildForwardIndex(files[:2])
+files = os.listdir(r"A:\ProgrmmingStuff\nela-gt-2022\newsdata") 
+buildForwardIndex(files[:1])
