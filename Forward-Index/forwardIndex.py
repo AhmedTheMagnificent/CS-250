@@ -104,4 +104,4 @@ def buildForwardIndex(documents):
 print(os.listdir())
 # Ensure full path for dsa_data
 files = os.listdir(r"A:\ProgrmmingStuff\nela-gt-2022\newsdata") 
-buildForwardIndex(files[:1])
+buildForwardIndex(files[:2])
