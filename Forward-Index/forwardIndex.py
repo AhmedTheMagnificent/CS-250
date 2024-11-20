@@ -7,9 +7,14 @@ from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 import re
 
-class DocID_URL_Mapping():
+nltk.download("stopwords")
+nltk.download("punkt")
+nltk.download("wordnet")
+
+
+class DocumentID_URL_Mapping():
     def __init__(self):
-        self.path = r"CS-250-Data-Structures-and-Algorithms/Forward-Index/URLs.json"
+        self.path = r"A:\ProgrmmingStuff\CS-250-Data-Structures-and-Algorithms\Forward-Index\URLs.json"
         self.mappings = self.loadDocumentIndex()
         
     def addToDocumentIndex(self, docID, URL):
@@ -31,6 +36,27 @@ class DocID_URL_Mapping():
             json.dump(self.mappings, file)
 
 lemmatizer = WordNetLemmatizer()
+urlMapper = DocumentID_URL_Mapping()
+
+try:
+    with open(r"A:\ProgrmmingStuff\CS-250-Data-Structures-and-Algorithms\Forward-Index\Lexicon.json", "r") as file:
+        content = file.read().strip()  # Remove any leading/trailing whitespace
+        if not content:  # Check if the file is empty
+            lexicon = {}  # Initialize an empty dictionary
+        else:
+            lexicon = json.loads(content)  # Parse JSON if content exists
+        wordID = max(lexicon.values()) + 1 if lexicon else 1
+except FileNotFoundError:
+    lexicon = {}
+    wordID = 1
+    
+try:
+    with open(r"A:\ProgrmmingStuff\CS-250-Data-Structures-and-Algorithms\Forward-Index\ForwardIndex.json", "r") as file:
+        forwardIndex = json.load(file)
+        documentID = max(map(int, forwardIndex.keys())) + 1 if forwardIndex else 1
+except FileNotFoundError:
+    forwardIndex = {}
+    documentID = 1
 
 def preprocess(content):
     content = content.replace("\n", " ")
@@ -42,66 +68,53 @@ def preprocess(content):
     content = [lemmatizer.lemmatize(word) for word in content if word not in stopwords.words("english") and len(word) > 2]
     return content
             
-def lexiconBuilder(words):
-    try:
-        with open(r"CS-250-Data-Structures-and-Algorithms/Forward-Index/Lexicon.json", "r") as file:
-            IDs = json.load(file)
-            IDnumber = max(IDs.values()) + 1 if IDs else 1
-    except FileNotFoundError:
-        IDs = {}
-        IDnumber = 1
-    
+def lexiconBuilder(words, lexicon, startID):
+
     for word in words:
-        if word not in IDs:
-            IDs[word] = IDnumber
-            IDnumber += 1
+        if word not in lexicon:
+            lexicon[word] = startID
+            startID += 1
     
-    with open(r"CS-250-Data-Structures-and-Algorithms/Forward-Index/Lexicon.json", "w") as file:
-        json.dump(IDs, file)
+    return lexicon, startID
 
-documentID = 0
 
-def buildForwardIndex(documents):
-    global documentID
-    path = r"A:\ProgrmmingStuff\nela-gt-2022\newsdata"
-    urlMapper = DocID_URL_Mapping()
+
+def buildForwardIndex(documents, lexicon, forwardIndex):
+    path = r"A:\ProgrmmingStuff\nela-gt-2022\newdata"
+    global wordID, documentID
     
     for document in documents:
+        
         articles = os.path.join(path, document)
-        with open(articles, "r") as f:
-            A = json.load(f)
-            for article in A:
-                forwardIndex = dict()
-                title = preprocess(article["title"])
-                content = preprocess(article["content"])
-                URL = article["url"]
-                lexiconBuilder(title + content)
-                
-                try:
-                    with open(r"CS-250-Data-Structures-and-Algorithms/Forward-Index/Lexicon.json", "r") as file:
-                        lexicon = json.load(file)
-                except FileNotFoundError:
-                    return {}
-                
-                urlMapper.addToDocumentIndex(documentID, URL)
-                
-                title_ids = [lexicon[word] for word in title]
-                content_ids = [lexicon[word] for word in content]
-                frequency = FreqDist(title_ids * 10 + content_ids)
-                
-                dictionary = {}
-                for word in set(title + content):
-                    dictionary[lexicon[word]] = frequency[lexicon[word]]
-                
-                forwardIndex[documentID] = dictionary
-                
-                # Write forwardIndex to disk incrementally
-                with open(r"CS-250-Data-Structures-and-Algorithms/Forward-Index/ForwardIndex.json", "a") as file:
-                    json.dump({documentID: forwardIndex[documentID]}, file)
-                    file.write("\n")  # Write each entry on a new line to avoid overwriting
+        with open(r"A:\ProgrmmingStuff\nela-gt-2022\newsdata\campusreform.json", "r") as file:
+            A = json.load(file)
+        for article in A[:100]:
+            title = preprocess(article["title"])
+            content = preprocess(article["content"])
+            URL = article["url"]
+            lexi, wordID = lexiconBuilder(title + content, lexicon, wordID)
+            lexicon.update(lexi)
+            urlMapper.addToDocumentIndex(documentID, URL)
+            
+            title_ids = [lexicon[word] for word in title]
+            content_ids = [lexicon[word] for word in content]
+            frequency = FreqDist(title_ids * 10 + content_ids)
+            dictionary = {}
+            for word in set(title + content):
+                dictionary[lexicon[word]] = frequency[lexicon[word]]
+            
+            forwardIndex[documentID] = dictionary                
+            documentID += 1
+        print(lexicon)
+            
 
-                documentID += 1
 print(os.listdir())
-# Ensure full path for dsa_data
 files = os.listdir(r"A:\ProgrmmingStuff\nela-gt-2022\newsdata") 
-buildForwardIndex(files[:2])
+print(files[:1])
+buildForwardIndex(files[:1], lexicon, forwardIndex)
+with open(r"A:\ProgrmmingStuff\CS-250-Data-Structures-and-Algorithms\Forward-Index\Lexicon.json", "w") as file:
+    json.dump(lexicon, file)             
+with open(r"A:\ProgrmmingStuff\CS-250-Data-Structures-and-Algorithms\Forward-Index\ForwardIndex.json", "w") as file:
+    json.dump(forwardIndex, file)
+    
+urlMapper.saveDocumentIndex()
