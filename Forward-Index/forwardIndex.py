@@ -80,15 +80,15 @@ def lexiconBuilder(words, lexicon, startID):
 
 
 def buildForwardIndex(documents, lexicon, forwardIndex):
-    path = r"A:\ProgrmmingStuff\nela-gt-2022\newdata"
+    path = r"A:\ProgrmmingStuff\nela-gt-2022\newsdata"
     global wordID, documentID
     
     for document in documents:
         
         articles = os.path.join(path, document)
-        with open(r"A:\ProgrmmingStuff\nela-gt-2022\newsdata\campusreform.json", "r") as file:
+        with open(articles, "r") as file:
             A = json.load(file)
-        for article in A[:100]:
+        for article in A:
             title = preprocess(article["title"])
             content = preprocess(article["content"])
             URL = article["url"]
@@ -110,8 +110,7 @@ def buildForwardIndex(documents, lexicon, forwardIndex):
 
 print(os.listdir())
 files = os.listdir(r"A:\ProgrmmingStuff\nela-gt-2022\newsdata") 
-print(files[:1])
-buildForwardIndex(files[:1], lexicon, forwardIndex)
+buildForwardIndex(files[:2], lexicon, forwardIndex)
 with open(r"A:\ProgrmmingStuff\CS-250-Data-Structures-and-Algorithms\Forward-Index\Lexicon.json", "w") as file:
     json.dump(lexicon, file)             
 with open(r"A:\ProgrmmingStuff\CS-250-Data-Structures-and-Algorithms\Forward-Index\ForwardIndex.json", "w") as file:
