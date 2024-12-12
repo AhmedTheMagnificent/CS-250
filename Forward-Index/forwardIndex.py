@@ -167,4 +167,4 @@ class DocumentProcessor:
 if __name__ == "__main__":
     documentProcessor = DocumentProcessor()
     files = os.listdir(r"A:\ProgrmmingStuff\nela-gt-2022\newsdata") 
-    documentProcessor.buildForwardIndex(files[:2])  # Process the first 10 files
+    documentProcessor.buildForwardIndex(files[:5])  # Process the first 10 files
